@@ -4,6 +4,12 @@
 }
 
 <h2>測試</h2>
+@using (Html.BeginForm())
+{
+@Html.TextBox("str")    
+    <input type="submit" value="submit" />
+}
+
 <p>@ViewBag.teststring </p>
 
 

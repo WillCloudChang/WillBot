@@ -4,27 +4,41 @@ using System.Text;
 using System.Web.Mvc;
 using Newtonsoft.Json;
 using WillBot.Models;
+using WillBot.Service;
 
 namespace WillBot.Controllers
 {
     public class TestController : Controller
     {
         // GET: Test
-        public ActionResult Index()
+        public ActionResult Index(string str)
         {
-            ResponseModels response = new ResponseModels();
-            string apiUrl = "http://query.yahooapis.com/v1/public/yql?format=json&env=store://datatables.org/alltableswithkeys&q=select * from yahoo.finance.quote where symbol in ('1101.TW')";
-            using (WebClient client = new WebClient()) {
-                
-                byte[] apiResponse = client.DownloadData(apiUrl);
-                string result = Encoding.UTF8.GetString(apiResponse);
-                Console.WriteLine(result);
-                ViewBag.teststring = result;
-                response = JsonConvert.DeserializeObject<ResponseModels>(result);
-                
+            BaseService bs = new BaseService();
+            StockService ss = new StockService();
+
+            try
+            {
+
+                string Message = str;
+                if (bs.IsCallMe(Message, out Message))
+                {
+
+                    Message = ss.GetOneStock(Message);
+                }
+                else
+                {
+                    Message = "薇兒看不懂這個ㄟ 0.0?";
+                }
+
+
+                return View();
+            }
+            catch
+            {
+
             }
 
-            return View(response);
+            return View();
         }
 
 

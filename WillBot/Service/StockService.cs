@@ -20,7 +20,7 @@ namespace WillBot.Service
 
             if (StrockID.Length != 4)
             {
-                result = "薇薇覺得股票代碼長度是不是不對啊???請檢查喔";
+                result = "薇兒覺得股票代碼長度是不是不對啊???請檢查喔";
             }
             try
             {
@@ -28,18 +28,18 @@ namespace WillBot.Service
                 using (WebClient client = new WebClient())
                 {
 
-                    byte[] apiResponse = client.DownloadData(apiUrl);
+                    byte[] apiResponse = client.DownloadData(url);
                     result = Encoding.UTF8.GetString(apiResponse);
 
                     response = JsonConvert.DeserializeObject<ResponseModels>(result);
-                    if (response.query.count < 1)
+                    if (string.IsNullOrEmpty(response.query.results.quote.Name ))
                     {
-                        result = "薇薇查不到這支股票代碼喔";
+                        result = "薇兒查不到這支股票代碼喔";
+                    }else { 
+
+                        result = string.Format("薇兒努力查到{0}的成交價為{1}，本日漲跌幅度為{2} 最高價為{3} 最低價為{4}喔~~"
+                            , response.query.results.quote.Name, response.query.results.quote.LastTradePriceOnly, response.query.results.quote.Change, response.query.results.quote.DaysHigh, response.query.results.quote.DaysLow);
                     }
-
-                    result = string.Format("股票代碼{0}，薇薇努力查到的成交價為{1}，本日漲跌幅度為{2} 最高價為{3} 最低價為{4}喔~~"
-                        , response.query.results.quote.Name, response.query.results.quote.LastTradePriceOnly, response.query.results.quote.Change, response.query.results.quote.DaysHigh, response.query.results.quote.DaysLow);
-
                 }
             }
             catch (Exception ex)
@@ -48,18 +48,6 @@ namespace WillBot.Service
             }
             return result;
         }
-
-        private string CheckStrockID(string StrockID)
-        {
-            string result = "OK";
-            if (StrockID.Length != 4)
-            {
-                result = "薇薇覺得股票代碼長度是不是不對啊???請檢查喔";
-            }
-
-            return result;
-        }
-
 
     }
 }
