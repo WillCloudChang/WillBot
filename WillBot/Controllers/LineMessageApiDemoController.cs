@@ -1,31 +1,23 @@
 ﻿using System;
-using System.Configuration;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
-using WillBot.Service;
 using LineMessageApiSDK;
 using Newtonsoft.Json;
-using WillBot.Models;
 
 namespace WillBot.Controllers
 {
-    public class MessagesController :ApiController
+    public class LineMessageApiDemoController : ApiController
     {
-        // GET: Messages
         [HttpPost]
-        public IHttpActionResult POST()
+        public IHttpActionResult Post()
         {
-            BaseService bs = new BaseService();
-            StockService ss = new StockService(); 
-
             try
             {
-                ResponseModels models = new ResponseModels();
-                
                 //建立channel物件 
-                LineChannel channel = new LineChannel(System.Web.Configuration.WebConfigurationManager.AppSettings["ChannelAccessToken"]);
+                LineChannel channel = new LineChannel("輸入你的 Channel Access Token");
                 //取得LINE POST過來的JSON資料
                 var rawdata = Request.Content.ReadAsStringAsync().Result;
                 //序列化成物件
@@ -35,7 +27,7 @@ namespace WillBot.Controllers
 
                 LineMessageApiSDK.LineReceivedObject.UserProfile userprofile = null;
                 string toid = string.Empty;
-                string message = string.Empty;
+                //可以判斷傳送訊息者的類型
                 switch (eventObj.source.type)
                 {
                     case SourceType.user:
@@ -52,6 +44,7 @@ namespace WillBot.Controllers
                         break;
                 }
 
+
                 //可以判斷事件類型
                 switch (eventObj.type)
                 {
@@ -62,22 +55,20 @@ namespace WillBot.Controllers
                         switch (eventObj.message.type)
                         {
                             case MessageType.text:
-
-                                if (bs.IsCallMe(eventObj.message.text, out message))
+                                //被動回復文字訊息
+                                channel.SendReplyMessage(eventObj.replyToken, new LineMessageApiSDK.LineMessageObject.TextMessage("你說：" + eventObj.message.text));
+                                //主動推送訊息
+                                if (userprofile == null)
                                 {
-                                    message = ss.GetOneStock(message);
-                                    //主動推送訊息
-                                    if (userprofile == null)
-                                    {
-                                        channel.SendPushMessage(toid, new LineMessageApiSDK.LineMessageObject.TextMessage(message));
-                                    }
-                                    else
-                                    {
-                                        //被動回復文字訊息
-                                        channel.SendReplyMessage(eventObj.replyToken, new LineMessageApiSDK.LineMessageObject.TextMessage(message));
-                                    }
+                                    channel.SendPushMessage(toid, new LineMessageApiSDK.LineMessageObject.TextMessage("第一次主動推送"), new LineMessageApiSDK.LineMessageObject.TextMessage("第二次主動推送"));
                                 }
+                                else
+                                {
 
+                                    channel.SendPushMessage(userprofile.userId, new LineMessageApiSDK.LineMessageObject.TextMessage($"Hello {userprofile.displayName} 你是不是說{eventObj.message.text}"));
+                                    //推送貼圖
+                                    channel.SendPushMessage(userprofile.userId, new LineMessageApiSDK.LineMessageObject.StickerMessage(1, 1));
+                                }
                                 break;
                             case MessageType.image:
                                 break;
@@ -113,13 +104,19 @@ namespace WillBot.Controllers
                         break;
                 }
 
+
                 return Ok();
+
+
             }
-            catch 
+            catch (Exception ex)
             {
-                
-                return Ok();
+
+                return InternalServerError(ex);
             }
+
+
+
         }
     }
 }

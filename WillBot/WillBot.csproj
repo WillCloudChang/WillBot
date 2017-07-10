@@ -60,8 +60,8 @@
       <HintPath>..\packages\HtmlAgilityPack.1.5.1\lib\Net45\HtmlAgilityPack.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="LineBot, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LineBotSDK.0.5.1\lib\net45\LineBot.dll</HintPath>
+    <Reference Include="LineMessageApiSDK, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\LibroLineMessageSDK.1.0.7\lib\net452\LineMessageApiSDK.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="LumenWorks.Framework.IO, Version=3.9.1.0, Culture=neutral, PublicKeyToken=5ad3ea2f85776344, processorArchitecture=MSIL">
@@ -230,6 +230,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LineMessageApiDemoController.cs" />
     <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Global.asax.cs">
