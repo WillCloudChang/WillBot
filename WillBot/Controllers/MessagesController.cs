@@ -32,7 +32,7 @@ namespace WillBot.Controllers
                 LineMessageApiSDK.LineReceivedObject.LineReceivedMsg ReceivedObject = JsonConvert.DeserializeObject<LineMessageApiSDK.LineReceivedObject.LineReceivedMsg>(rawdata);
                 //取得event物件
                 var eventObj = ReceivedObject.events[0];
-
+               
                 LineMessageApiSDK.LineReceivedObject.UserProfile userprofile = null;
                 string toid = string.Empty;
                 string message = string.Empty;
