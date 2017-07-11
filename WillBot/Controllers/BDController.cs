@@ -28,7 +28,7 @@ namespace WillBot.Controllers
                     message = ss.GetOneStock(message);
                 }
 
-                return Ok(rawdata);
+                return Ok(message);
             }
             catch (Exception ex)
             {
