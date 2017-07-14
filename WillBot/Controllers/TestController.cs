@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Net;
 using System.Text;
 using System.Web.Mvc;
@@ -13,48 +14,40 @@ namespace WillBot.Controllers
         // GET: Test
         public ActionResult Index(string str)
         {
-            BaseService bs = new BaseService();
-            StockService ss = new StockService();
-
-            //string rawdata = @"{
-            //  'replyToken': 'nHuyWiB7yP5Zw52FIkcQobQuGDXCTA',
-            //  'type': 'message',
-            //  'timestamp': 1462629479859,
-            //  'source': {
-            //                'type': 'user',
-            //    'userId': 'U206d25c2ea6bd87c17655609a1c37cb8'
-            //  },
-            //  'message': {
-            //                'id': '325708',
-            //    'type': 'text',
-            //    'text': 'Hello, world'
-            //  }
-            //        }";
-            //FromBDModels msg = JsonConvert.DeserializeObject<FromBDModels>(rawdata);
-
-            try
+            if (string.IsNullOrEmpty(str))
             {
-
-                string Message = str;
-                if (bs.IsCallMe(Message, out Message))
-                {
-
-                    Message = ss.GetOneStock(Message);
-                }
-                else
-                {
-                    Message = "薇兒看不懂這個ㄟ 0.0?";
-                }
-
-
                 return View();
             }
-            catch
+            string[] messages = new string[] { };
+            string result = "";
+            GoogleService gs = new GoogleService();
+            if (gs.IsCallMe(str, out messages))
             {
-
+                result = gs.GetGeoCoding(messages);
+                
             }
+                //string GoogleApiKey = System.Web.Configuration.WebConfigurationManager.AppSettings["GoogleApiKey"];
+                //string apiUrl = string.Format(@"https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}", str,  System.Web.Configuration.WebConfigurationManager.AppSettings["GoogleApiKey"]);
+                //apiUrl= @"https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyDpgIPYzEbLl5gR8aqqRK3fCFP01eSe-p0";
+                //using (WebClient wc = new WebClient())
+                //{
+                //    try
+                //    {
+                //        wc.Encoding = Encoding.UTF8;
+                //        wc.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
-            return View();
+                //        byte[] bResult = wc.DownloadData(apiUrl);
+
+                //        str = Encoding.UTF8.GetString(bResult);
+                //    }
+                //    catch (WebException ex)
+                //    {
+                //        throw new Exception(ex.Message);
+                //    }
+                //}
+
+                //GeoCodingModels model = JsonConvert.DeserializeObject<GeoCodingModels>(str);
+                return View();
         }
 
 

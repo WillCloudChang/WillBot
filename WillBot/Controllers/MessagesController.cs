@@ -36,6 +36,7 @@ namespace WillBot.Controllers
                 LineMessageApiSDK.LineReceivedObject.UserProfile userprofile = null;
                 string toid = string.Empty;
                 string message = string.Empty;
+                string[] messages = new string[] { };
                 switch (eventObj.source.type)
                 {
                     case SourceType.user:
@@ -63,9 +64,9 @@ namespace WillBot.Controllers
                         {
                             case MessageType.text:
 
-                                if (bs.IsCallMe(eventObj.message.text, out message))
+                                if (bs.IsCallMe(eventObj.message.text, out messages))
                                 {
-                                    message = ss.GetOneStock(message);
+                                    message = ss.GetOneStock(messages);
                                     //主動推送訊息
                                     if (userprofile == null)
                                     {

@@ -11,24 +11,29 @@ namespace WillBot.Controllers
         [HttpPost]
         public IHttpActionResult POST()
         {
+            FromBDModels fromModel = new FromBDModels();
+            ToBDModels toModel = new ToBDModels();
             try
             {
                 BaseService bs = new BaseService();
                 StockService ss = new StockService();
+
                 //取得LINE POST過來的JSON資料
                 var rawdata = Request.Content.ReadAsStringAsync().Result;
                 //序列化成物件
                 LineMessageApiSDK.LineReceivedObject.LineReceivedMsg ReceivedObject = JsonConvert.DeserializeObject<LineMessageApiSDK.LineReceivedObject.LineReceivedMsg>(rawdata);
-                FromBDModels model = JsonConvert.DeserializeObject<FromBDModels>(rawdata);
-
+                
+                fromModel = JsonConvert.DeserializeObject<FromBDModels>(rawdata);
+                
                 string message = string.Empty;
-
-                if (bs.IsCallMe(model.message.text, out message))
+                string[] messages = new string[] { };
+                if (bs.IsCallMe(fromModel.message.text, out messages))
                 {
-                    message = ss.GetOneStock(message);
+                    message = ss.GetOneStock(messages);
                 }
-
-                return Ok(message);
+                toModel.data = message;
+                toModel.messages = new string[] { };
+                return Ok(toModel);
             }
             catch (Exception ex)
             {

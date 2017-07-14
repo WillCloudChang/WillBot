@@ -1,7 +1,4 @@
-﻿using System.Configuration;
-using System.Web.Mvc;
-using Google.Apis.Services;
-using Google.Apis.Discovery;
+﻿using System.Web.Mvc;
 
 namespace WillBot.Controllers
 {
